@@ -5,6 +5,8 @@ The provided scripts help to extract stereo data as described in our [paper](htt
 >Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer  
 René Ranftl, Katrin Lasinger, David Hafner, Konrad Schindler, Vladlen Koltun
 
+Code for monocular depth estimation: [https://github.com/intel-isl/MiDaS](https://github.com/intel-isl/MiDaS)
+
 ## Frame Extraction
 
 There exist multiple different formats to store stereo videos.
