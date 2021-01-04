@@ -13,7 +13,8 @@ parser = argparse.ArgumentParser(
     description="create training/test/validation sets from video list"
 )
 
-parser.add_argument("--videoListPath", type=str, help="path to videos", required=True)
+parser.add_argument("--videoListPath", type=str,
+                    help="path to videos", required=True)
 parser.add_argument(
     "--fpsSingle", type=int, help="fps for single frame processing", default=2
 )
@@ -82,9 +83,9 @@ def processChapter_cutlist(
                 if idx == -1:
                     continue
 
-                pts_time = float(line[idx + 9 : idx + 9 + 7])
+                pts_time = float(line[idx + 9: idx + 9 + 7])
                 idx2 = line.find("n:")
-                frame_idx = int(line[idx2 + 2 : idx2 + 2 + 5]) + 1
+                frame_idx = int(line[idx2 + 2: idx2 + 2 + 5]) + 1
                 # use floor here to be on the save side
                 if pts_time <= timing[0] or pts_time > math.floor(timing[1]):
                     continue
@@ -146,7 +147,7 @@ def processShotFile(video, shotFile):
             idx = line.find("pkt_pts_time=")
             if idx != -1:
                 numFrames = numFrames + 1
-                pts_time = float(line[idx + 13 : idx + 13 + 8])
+                pts_time = float(line[idx + 13: idx + 13 + 8])
                 cutList.append(pts_time)
     return cutList
 
