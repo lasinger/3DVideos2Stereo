@@ -1,12 +1,15 @@
 #!/bin/bash
 
 video_name=$1
-input="/home/hauke/Master/MasterThesis/data/3dmovies/${video_name}.mkv"
+base_dir="/home/hauke/Master/MasterThesis/data/3dmovies/"
+input="${base_dir}mvc_videos/${video_name}.mkv"
 outputTitle="${video_name}_SBS"
-outputFolder="/home/hauke/Master/MasterThesis/data/3dmovies/sbs_videos/${outputTitle}/"
+outputFolder="${base_dir}sbs_videos/${outputTitle}/"
 FRIMDecode="/home/hauke/Master/MasterThesis/FRIM_x86_version_1.31/FRIMDecode32"
 
-mkdir $outputFolder
+echo "Converting ${input} to SBS format."
+
+mkdir -p $outputFolder
 
 ffmpeg -i ${input} 2>&1 | grep Chapter | grep start | awk '{print $4 $6}' >> ${outputFolder}chapters.txt
 

@@ -81,6 +81,6 @@ done
 
 # copy chapter info and remove uneeded files (esp raw files), move files back to server
 cp ${chapter_file} ${output_meta}timingChapters.txt
-#rm -r ${output_frames_raw}
+rm -r ${output_frames_raw}
 
 echo "Done!"
