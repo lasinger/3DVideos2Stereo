@@ -91,7 +91,7 @@ def main():
                 f"Not enough cores available. Using maximum of {num_cores} cores.")
             num_cores = max_cores
         else:
-            print(f"Using {args.numCores} out of {num_cores}")
+            print(f"Using {args.numCores} out of {num_cores} cores.")
 
     inputs = tqdm(imgList)
 

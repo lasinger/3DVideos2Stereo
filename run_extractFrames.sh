@@ -1,6 +1,8 @@
 #!/bin/bash
 
-video_name=$1
+# This script extracts the individual frames from the SBS videos und splits the left and right images
+
+video_name=$1  # Name of the SBS video (without the .mkv extension)
 base_dir="/home/hauke/Master/MasterThesis/data/3dmovies/"
 frame_dir="sbs_frames/"
 output_dir="${base_dir}${frame_dir}"
@@ -28,17 +30,15 @@ mkdir -p $output_meta
 mkdir -p $output_frames_raw
 
 
-#get cut information
-
+# get cut information
 echo "Extracting scenes from ${video_name} ..."
 
-#ffprobe -show_frames -of compact=p=0 -f lavfi "movie=${video_path}${video_filename},select=gt(scene\,0.1)" >> ${output_meta}shots.txt 2>&1 
+ffprobe -show_frames -of compact=p=0 -f lavfi "movie=${video_path}${video_filename},select=gt(scene\,0.1)" >> ${output_meta}shots.txt 2>&1
 
 echo " "
 
-#per chapter extract raw images (full frame rate, full resolution, no clipping, left and right image combined in one image sbs)
-#additional log info is stored
-
+# per chapter extract raw images (full frame rate, full resolution, no clipping, left and right image combined in one image sbs)
+# additional log info is stored
 echo "Extracting sbs images from ${video_name} into ${output_frames_raw} ..."
 start_time=$(date +%s.%N)
 
@@ -52,8 +52,8 @@ do
 	mkdir -p ${output_frames_raw}chapter${chap_idx}/
 	ffmpeg -ss $startTs -i ${video_path}${video_filename} -to $endTs -copyts -vf showinfo -qscale:v 1 ${output_frames_raw}chapter${chap_idx}/out%08d.jpg </dev/null >> ${output_meta}log${chap_idx}.txt 2>&1 &
 done < "$chapter_file"
-wait
-# Conver the time to some useful values
+wait     # wait for all the started processes to finish
+# convert the time to some useful values
 end_time=$(date +%s.%N)
 dt=$(echo "$end_time - $start_time" | bc)
 dd=$(echo "$dt/86400" | bc)
@@ -79,7 +79,7 @@ for subfolder in ${output_frames_raw}*/ ; do
 	python splitImagesChapters.py --raw ${output_frames_raw}${b_subfolder}/ --outLeft ${output_frames_left}${b_subfolder}/ --outRight ${output_frames_right}${b_subfolder}/ --txtList ${output_meta}${b_subfolder}.txt --paddingAR 280 --paddingAR_side 40 --numCores 8 
 done
 
-# copy chapter info and remove uneeded files (esp raw files), move files back to server
+# copy chapter info and remove unneeded files (esp raw files)
 cp ${chapter_file} ${output_meta}timingChapters.txt
 rm -r ${output_frames_raw}
 
