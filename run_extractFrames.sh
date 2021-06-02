@@ -13,10 +13,14 @@ chapter_file="${video_path}chapter.txt"
 chap_idx="0"
 #
 
-mkdir -p $output_frames_left
-mkdir -p $output_frames_right
-mkdir -p $output_meta
-mkdir -p $output_frames_raw
+mkdir -p "$video_path"
+mkdir -p "$output_frames_left"
+mkdir -p "$output_frames_right"
+mkdir -p "$output_meta"
+mkdir -p "$output_frames_raw"
+
+# make chapter file if it doesn't already exist
+[ -f "$chapter_file" ] || ffmpeg -i "${video_path}${video_filename}" 2>&1 | grep Chapter | grep start | awk '{print $4 $6}' >> "$chapter_file"
 
 #get cut information
 ffprobe -show_frames -of compact=p=0 -f lavfi "movie=${video_path}${video_filename},select=gt(scene\,0.1)" >> ${output_meta}shots.txt 2>&1 
@@ -31,7 +35,7 @@ do
 	duration=$(awk '{print $1-$2-$3}' <<< "$endTs $startTs 0.1")
 	echo "$startTs $endTs $duration"
 	mkdir -p ${output_frames_raw}chapter${chap_idx}/
-	ffmpeg -ss $startTs -i ${video_path}${video_filename} -to $endTs -copyts -vf showinfo -qscale:v 1 ${output_frames_raw}chapter${chap_idx}/out%08d.jpg </dev/null >> ${output_meta}log${chap_idx}.txt 2>&1
+	ffmpeg -ss $startTs -i "${video_path}${video_filename}" -to $endTs -copyts -vf showinfo -qscale:v 1 ${output_frames_raw}chapter${chap_idx}/out%08d.jpg </dev/null >> ${output_meta}log${chap_idx}.txt 2>&1
 done < "$chapter_file"
 
 # extract clipped left and right images from raw images (clipping is done to remove black borders)
@@ -46,6 +50,6 @@ for subfolder in ${output_frames_raw}*/ ; do
 done
 
 # copy chapter info and remove uneeded files (esp raw files), move files back to server
-cp ${chapter_file} ${output_meta}timingChapters.txt
-rm -r ${output_frames_raw}
+cp "$chapter_file" "${output_meta}timingChapters.txt"
+rm -r "${output_frames_raw}"
 
